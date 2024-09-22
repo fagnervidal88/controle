@@ -18,8 +18,8 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Nome</th>
-                <th>Data</th>
+                <th onclick="sortTable(0)">Nome</th>
+                <th onclick="sortTable(1)">Data</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -87,14 +87,27 @@
     let obras = JSON.parse(localStorage.getItem('obras')) || [];
     const tabelaPavimentos = document.getElementById('tabelaPavimentos');
 
+    function formatDateBR(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function parseDateBR(dateString) {
+        const parts = dateString.split('/');
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+
     function displayPavimentos() {
         const pavimentos = obras[obraIndex].pavimentos;
         tabelaPavimentos.innerHTML = '';
         pavimentos.forEach((pavimento, index) => {
+            const formattedDate = formatDateBR(new Date(pavimento.data));
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${pavimento.nome}</td>
-                <td>${pavimento.data}</td>
+                <td>${formattedDate}</td>
                 <td>
                     <button class="btn btn-info btn-sm" onclick="editPavimento(${obraIndex}, ${index})">Editar</button>
                     <button class="btn btn-danger btn-sm" onclick="deletePavimento(${obraIndex}, ${index})">Excluir</button>
@@ -163,6 +176,31 @@
             rows[i].style.display = found ? '' : 'none';
         }
     });
+
+    // Função de ordenação para colunas
+    let sortDirection = {}; // Armazena a direção de classificação para cada coluna
+    function sortTable(colIndex) {
+        const rows = Array.from(tabelaPavimentos.rows);
+        const isAscending = sortDirection[colIndex] === 'asc'; // Verifica a direção de classificação atual
+        const isDateColumn = (colIndex === 1); // Verifica se é a coluna de datas
+
+        rows.sort((a, b) => {
+            let aText = a.cells[colIndex].innerText.trim();
+            let bText = b.cells[colIndex].innerText.trim();
+
+            if (isDateColumn) {
+                aText = parseDateBR(aText);
+                bText = parseDateBR(bText);
+                return isAscending ? aText - bText : bText - aText;
+            } else {
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
+        });
+
+        sortDirection[colIndex] = isAscending ? 'desc' : 'asc';
+
+        rows.forEach(row => tabelaPavimentos.appendChild(row));
+    }
 
     displayPavimentos();
 </script>

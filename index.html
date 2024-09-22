@@ -465,16 +465,85 @@
         }
     });
 
+    let sortDirection = {}; // Armazena a direção de classificação para cada coluna
+
     function sortTable(colIndex) {
-        const rows = Array.from(tabelaObras.rows).slice(1);
-        const isAscending = rows[0].cells[colIndex].innerText > rows[rows.length - 1].cells[colIndex].innerText;
+        const tabelaObras = document.getElementById('tabelaObras');
+        const rows = Array.from(tabelaObras.rows);
+        const isAscending = sortDirection[colIndex] === 'asc'; // Verifica a direção de classificação atual
+
+        // Verifica se a coluna é uma coluna de datas (ajuste o índice da coluna para corresponder à coluna de data)
+        const isDateColumn = (colIndex === 4); // Ajuste conforme necessário
+
         rows.sort((a, b) => {
-            const aText = a.cells[colIndex].innerText;
-            const bText = b.cells[colIndex].innerText;
-            return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            let aText = a.cells[colIndex].innerText.trim();
+            let bText = b.cells[colIndex].innerText.trim();
+
+            // Se for uma coluna de datas, converta para o formato Date antes de comparar
+            if (isDateColumn) {
+                aText = parseDateBR(aText);
+                bText = parseDateBR(bText);
+                return isAscending ? aText - bText : bText - aText;
+            } else {
+                // Comparação de texto normal para todas as outras colunas
+                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+            }
         });
+
+        // Altera a direção de classificação
+        sortDirection[colIndex] = isAscending ? 'desc' : 'asc';
+
+        // Reordena as linhas na tabela
         rows.forEach(row => tabelaObras.appendChild(row));
     }
+
+    // Função para converter datas do formato BR (dd/mm/yyyy) para um objeto Date
+    function parseDateBR(dateString) {
+        const parts = dateString.split('/');
+        return new Date(parts[2], parts[1] - 1, parts[0]); // Ano, Mês (0-11), Dia
+    }
+
+    // Função para exibir a data no formato BR
+    function formatDateBR(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    // Função para exibir as obras e garantir que a data esteja no formato BR
+    function displayObras() {
+        const tabelaObras = document.getElementById('tabelaObras');
+        tabelaObras.innerHTML = '';
+
+        obras.forEach((obra, index) => {
+            const row = document.createElement('tr');
+            
+            // Converte a data de concreto para o formato BR ao exibir
+            const dataConcretoFormatted = formatDateBR(new Date(obra.dataConcreto));
+
+            row.innerHTML = `
+                <td>${obra.projetista}</td>
+                <td>${obra.nomeObra}</td>
+                <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${obra.endereco}</a></td>
+                <td>${obra.torre}</td>
+                <td>${dataConcretoFormatted}</td>
+                <td>${obra.pavimentoAtivo}</td>
+                <td style="background-color: ${obra.pilarCor};">${obra.pilar}</td>
+                <td style="background-color: ${obra.gradeCor};">${obra.grade}</td>
+                <td style="background-color: ${obra.vigaCor};">${obra.viga}</td>
+                <td style="background-color: ${obra.garfoCor};">${obra.garfo}</td>
+                <td style="background-color: ${obra.lajeCor};">${obra.laje}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
+                    <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
+                    <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">Ver Pavimentos</a>
+                </td>
+            `;
+            tabelaObras.appendChild(row);
+        });
+    }
+
 
     displayObras();
 </script>

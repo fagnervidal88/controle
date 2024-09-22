@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Controle de Obras</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f9fc;
+        }
+        h2 {
+            color: #333;
+        }
+        .modal-content {
+            animation: slideIn 0.4s;
+        }
+        @keyframes slideIn {
+            from {transform: translateY(-20%); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        th {
+            cursor: pointer;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-dialog {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+        .pavimentos {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center">Controle de Obras</h2>
+    
+    <button class="btn btn-primary mb-3" onclick="toggleModal('modalObra')">Adicionar Obra</button>
+
+    <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
+
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th onclick="sortTable(0)">Projetista</th>
+                <th onclick="sortTable(1)">Nome da Obra</th>
+                <th onclick="sortTable(2)">Endereço</th>
+                <th onclick="sortTable(3)">Torre</th>
+                <th onclick="sortTable(4)">Data do Concreto</th>
+                <th onclick="sortTable(5)">Pavimento Ativo</th>
+                <th onclick="sortTable(6)">Pilar</th>
+                <th onclick="sortTable(7)">Grade</th>
+                <th onclick="sortTable(8)">Viga</th>
+                <th onclick="sortTable(9)">Garfo</th>
+                <th onclick="sortTable(10)">Laje</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaObras">
+            <!-- Dados cadastrados serão exibidos aqui -->
+        </tbody>
+    </table>
+
+    <!-- Modal para adicionar obra -->
+    <div id="modalObra" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cadastrar Obra</h5>
+                    <button type="button" class="close" onclick="toggleModal('modalObra')">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="obraForm">
+                        <div class="form-group">
+                            <label for="projetista">Projetista</label>
+                            <select id="projetista" class="form-control" required>
+                                <option value="">Selecione o Projetista</option>
+                                <option value="João Silva">João Silva</option>
+                                <option value="Maria Souza">Maria Souza</option>
+                                <option value="Carlos Oliveira">Carlos Oliveira</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="nomeObra">Nome da Obra</label>
+                            <input type="text" id="nomeObra" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="enderecoObra">Endereço</label>
+                            <input type="text" id="enderecoObra" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="torre">Torre</label>
+                            <input type="text" id="torre" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataConcreto">Data do Concreto</label>
+                            <input type="date" id="dataConcreto" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pavimentoAtivo">Pavimento Ativo</label>
+                            <input type="text" id="pavimentoAtivo" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pilar">Pilar</label>
+                            <input type="text" id="pilar" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="corPilar">Cor Pilar</label>
+                            <input type="color" id="corPilar" class="form-control" value="#ffffff" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="grade">Grade</label>
+                            <input type="text" id="grade" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="corGrade">Cor Grade</label>
+                            <input type="color" id="corGrade" class="form-control" value="#ffffff" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="viga">Viga</label>
+                            <input type="text" id="viga" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="corViga">Cor Viga</label>
+                            <input type="color" id="corViga" class="form-control" value="#ffffff" required>
+                        </div>                     
+                        <div class="form-group">
+                            <label for="garfo">Garfo</label>
+                            <input type="text" id="garfo" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="corGarfo">Cor Garfo</label>
+                            <input type="color" id="corGarfo" class="form-control" value="#ffffff" required>
+                        </div>                                            
+                        <div class="form-group">
+                            <label for="laje">Laje</label>
+                            <input type="text" id="laje" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="corLaje">Cor Laje</label>
+                            <input type="color" id="corLaje" class="form-control" value="#ffffff" required>
+                        </div>                                            
+                        <button type="submit" class="btn btn-primary">Cadastrar Obra</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para adicionar pavimento -->
+<div id="modalPavimento" class="modal">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Adicionar Pavimento</h5>
+              <button type="button" class="close" onclick="toggleModal('modalPavimento')">&times;</button>
+          </div>
+          <div class="modal-body">
+              <form id="pavimentoForm">
+                  <div class="form-group">
+                      <label for="nomePavimento">Nome do Pavimento</label>
+                      <input type="text" id="nomePavimento" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="dataPavimento">Data</label>
+                      <input type="date" id="dataPavimento" class="form-control" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Adicionar Pavimento</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal para editar pavimento -->
+<div id="modalEditPavimento" class="modal">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Editar Pavimento</h5>
+              <button type="button" class="close" onclick="toggleModal('modalEditPavimento')">&times;</button>
+          </div>
+          <div class="modal-body">
+              <form id="editPavimentoForm">
+                  <div class="form-group">
+                      <label for="editNomePavimento">Nome do Pavimento</label>
+                      <input type="text" id="editNomePavimento" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editDataPavimento">Data</label>
+                      <input type="date" id="editDataPavimento" class="form-control" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<!-- Modal para editar obra -->
+<div id="modalEditObra" class="modal">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Editar Obra</h5>
+              <button type="button" class="close" onclick="toggleModal('modalEditObra')">&times;</button>
+          </div>
+          <div class="modal-body">
+              <form id="editObraForm">
+                  <div class="form-group">
+                      <label for="editProjetista">Projetista</label>
+                      <select id="editProjetista" class="form-control" required>
+                          <option value="João Silva">João Silva</option>
+                          <option value="Maria Souza">Maria Souza</option>
+                          <option value="Carlos Oliveira">Carlos Oliveira</option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                      <label for="editNomeObra">Nome da Obra</label>
+                      <input type="text" id="editNomeObra" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editEnderecoObra">Endereço</label>
+                      <input type="text" id="editEnderecoObra" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editTorre">Torre</label>
+                      <input type="text" id="editTorre" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editDataConcreto">Data do Concreto</label>
+                      <input type="date" id="editDataConcreto" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editPavimentoAtivo">Pavimento Ativo</label>
+                      <input type="text" id="editPavimentoAtivo" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editPilar">Pilar</label>
+                      <input type="text" id="editPilar" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editCorPilar">Cor Pilar</label>
+                      <input type="color" id="editCorPilar" class="form-control" required>
+                  </div>                        
+                  <div class="form-group">
+                      <label for="editGrade">Grade</label>
+                      <input type="text" id="editGrade" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editCorGrade">Cor Grade</label>
+                      <input type="color" id="editCorGrade" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editViga">Viga</label>
+                      <input type="text" id="editViga" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editCorViga">Cor Viga</label>
+                      <input type="color" id="editCorViga" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editGarfo">Garfo</label>
+                      <input type="text" id="editGarfo" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editCorGarfo">Cor Garfo</label>
+                      <input type="color" id="editCorGarfo" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editLaje">Laje</label>
+                      <input type="text" id="editLaje" class="form-control" required>
+                  </div>
+                  <div class="form-group">
+                      <label for="editCorLaje">Cor Laje</label>
+                      <input type="color" id="editCorLaje" class="form-control" required>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+<script>
+    let obras = JSON.parse(localStorage.getItem('obras')) || [];
+    const tabelaObras = document.getElementById('tabelaObras');
+
+    document.getElementById('obraForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const obra = {
+            projetista: document.getElementById('projetista').value,
+            nomeObra: document.getElementById('nomeObra').value,
+            endereco: document.getElementById('enderecoObra').value,
+            torre: document.getElementById('torre').value,
+            dataConcreto: document.getElementById('dataConcreto').value,
+            pavimentoAtivo: document.getElementById('pavimentoAtivo').value,
+            pilar: document.getElementById('pilar').value,
+            pilarCor: document.getElementById('corPilar').value,
+            grade: document.getElementById('grade').value,
+            gradeCor: document.getElementById('corGrade').value,
+            viga: document.getElementById('viga').value,
+            vigaCor: document.getElementById('corViga').value,
+            garfo: document.getElementById('garfo').value,
+            garfoCor: document.getElementById('corGarfo').value,
+            laje: document.getElementById('laje').value,
+            lajeCor: document.getElementById('corLaje').value,
+            pavimentos: []
+        };
+        obras.push(obra);
+        localStorage.setItem('obras', JSON.stringify(obras));
+        this.reset();
+        toggleModal('modalObra');
+        displayObras();
+    });
+
+    function displayObras() {
+        tabelaObras.innerHTML = '';
+        obras.forEach((obra, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${obra.projetista}</td>
+                <td>${obra.nomeObra}</td>
+                <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${obra.endereco}</a></td>
+                <td>${obra.torre}</td>
+                <td>${obra.dataConcreto}</td>
+                <td>${obra.pavimentoAtivo}</td>              
+                <td style="background-color: ${obra.pilarCor};">${obra.pilar}</td>
+                <td style="background-color: ${obra.gradeCor};">${obra.grade}</td>
+                <td style="background-color: ${obra.vigaCor};">${obra.viga}</td>
+                <td style="background-color: ${obra.garfoCor};">${obra.garfo}</td>
+                <td style="background-color: ${obra.lajeCor};">${obra.laje}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
+                    <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
+                    <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">Ver Pavimentos</a>
+                </td>
+            `;
+            tabelaObras.appendChild(row);
+        });
+    }
+
+    function toggleModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function selectObra(index) {
+        const modalPavimento = document.getElementById('modalPavimento');
+        modalPavimento.setAttribute('data-obra-index', index);
+        toggleModal('modalPavimento');
+    }
+
+    document.getElementById('pavimentoForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const index = document.getElementById('modalPavimento').getAttribute('data-obra-index');
+        const pavimento = {
+            nome: document.getElementById('nomePavimento').value,
+            data: document.getElementById('dataPavimento').value
+        };
+        obras[index].pavimentos.push(pavimento);
+        localStorage.setItem('obras', JSON.stringify(obras));
+        document.getElementById('pavimentoForm').reset();
+        toggleModal('modalPavimento');
+        displayObras();
+    });
+
+    function loadEditObra(index) {
+        const obra = obras[index];
+        document.getElementById('editProjetista').value = obra.projetista;
+        document.getElementById('editNomeObra').value = obra.nomeObra;
+        document.getElementById('editEnderecoObra').value = obra.endereco;
+        document.getElementById('editTorre').value = obra.torre;
+        document.getElementById('editDataConcreto').value = obra.dataConcreto;
+        document.getElementById('editPavimentoAtivo').value = obra.pavimentoAtivo;
+        document.getElementById('editPilar').value = obra.pilar;
+        document.getElementById('editCorPilar').value = obra.pilarCor;
+        document.getElementById('editGrade').value = obra.grade;
+        document.getElementById('editCorGrade').value = obra.gradeCor;
+        document.getElementById('editViga').value = obra.viga;
+        document.getElementById('editCorViga').value = obra.vigaCor;        
+        document.getElementById('editGarfo').value = obra.garfo;
+        document.getElementById('editCorGarfo').value = obra.garfoCor;
+        document.getElementById('editLaje').value = obra.laje;
+        document.getElementById('editCorLaje').value = obra.lajeCor;
+        document.getElementById('modalEditObra').setAttribute('data-obra-index', index);
+        toggleModal('modalEditObra');
+    }
+
+    document.getElementById('editObraForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const index = document.getElementById('modalEditObra').getAttribute('data-obra-index');
+        const obra = obras[index];
+        obra.projetista = document.getElementById('editProjetista').value;
+        obra.nomeObra = document.getElementById('editNomeObra').value;
+        obra.endereco = document.getElementById('editEnderecoObra').value;
+        obra.torre = document.getElementById('editTorre').value;
+        obra.dataConcreto = document.getElementById('editDataConcreto').value;
+        obra.pavimentoAtivo = document.getElementById('editPavimentoAtivo').value;
+        obra.pilar = document.getElementById('editPilar').value;
+        obra.pilarCor = document.getElementById('editCorPilar').value;
+        obra.grade = document.getElementById('editGrade').value;
+        obra.gradeCor = document.getElementById('editCorGrade').value;
+        obra.viga = document.getElementById('editViga').value;
+        obra.vigaCor = document.getElementById('editCorViga').value;
+        obra.garfo = document.getElementById('editGarfo').value;
+        obra.garfoCor = document.getElementById('editCorGarfo').value;
+        obra.laje = document.getElementById('editLaje').value;
+        obra.lajeCor = document.getElementById('editCorLaje').value;
+        localStorage.setItem('obras', JSON.stringify(obras));
+        toggleModal('modalEditObra');
+        displayObras();
+    });
+
+    function editPavimento(obraIndex, pavimentoIndex) {
+        const pavimento = obras[obraIndex].pavimentos[pavimentoIndex];
+        document.getElementById('editNomePavimento').value = pavimento.nome;
+        document.getElementById('editDataPavimento').value = pavimento.data;
+        document.getElementById('modalEditPavimento').setAttribute('data-obra-index', obraIndex);
+        document.getElementById('modalEditPavimento').setAttribute('data-pavimento-index', pavimentoIndex);
+        toggleModal('modalEditPavimento');
+    }
+
+    document.getElementById('editPavimentoForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const obraIndex = document.getElementById('modalEditPavimento').getAttribute('data-obra-index');
+        const pavimentoIndex = document.getElementById('modalEditPavimento').getAttribute('data-pavimento-index');
+        obras[obraIndex].pavimentos[pavimentoIndex].nome = document.getElementById('editNomePavimento').value;
+        obras[obraIndex].pavimentos[pavimentoIndex].data = document.getElementById('editDataPavimento').value;
+        localStorage.setItem('obras', JSON.stringify(obras));
+        toggleModal('modalEditPavimento');
+        displayObras();
+    });
+
+    document.getElementById('filterInput').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = tabelaObras.getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                    found = true;
+                    break;
+                }
+            }
+            rows[i].style.display = found ? '' : 'none';
+        }
+    });
+
+    function sortTable(colIndex) {
+        const rows = Array.from(tabelaObras.rows).slice(1);
+        const isAscending = rows[0].cells[colIndex].innerText > rows[rows.length - 1].cells[colIndex].innerText;
+        rows.sort((a, b) => {
+            const aText = a.cells[colIndex].innerText;
+            const bText = b.cells[colIndex].innerText;
+            return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        });
+        rows.forEach(row => tabelaObras.appendChild(row));
+    }
+
+    displayObras();
+</script>
+
+</body>
+</html>

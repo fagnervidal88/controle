@@ -46,6 +46,13 @@
             font-size: 0.9em;
             color: #555;
         }
+        input[type="color"] {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: none;
+            background: none;
+        }
     </style>
 </head>
 <body>
@@ -299,254 +306,241 @@
       </div>
   </div>
 </div>
+
 <script>
-    let obras = JSON.parse(localStorage.getItem('obras')) || [];
-    const tabelaObras = document.getElementById('tabelaObras');
+  let obras = JSON.parse(localStorage.getItem('obras')) || [];
+  const tabelaObras = document.getElementById('tabelaObras');
 
-    document.getElementById('obraForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const obra = {
-            projetista: document.getElementById('projetista').value,
-            nomeObra: document.getElementById('nomeObra').value,
-            endereco: document.getElementById('enderecoObra').value,
-            torre: document.getElementById('torre').value,
-            dataConcreto: document.getElementById('dataConcreto').value,
-            pavimentoAtivo: document.getElementById('pavimentoAtivo').value,
-            pilar: document.getElementById('pilar').value,
-            pilarCor: document.getElementById('corPilar').value,
-            grade: document.getElementById('grade').value,
-            gradeCor: document.getElementById('corGrade').value,
-            viga: document.getElementById('viga').value,
-            vigaCor: document.getElementById('corViga').value,
-            garfo: document.getElementById('garfo').value,
-            garfoCor: document.getElementById('corGarfo').value,
-            laje: document.getElementById('laje').value,
-            lajeCor: document.getElementById('corLaje').value,
-            pavimentos: []
-        };
-        obras.push(obra);
-        localStorage.setItem('obras', JSON.stringify(obras));
-        this.reset();
-        toggleModal('modalObra');
-        displayObras();
-    });
+  document.getElementById('obraForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const obra = {
+          projetista: document.getElementById('projetista').value,
+          nomeObra: document.getElementById('nomeObra').value,
+          endereco: document.getElementById('enderecoObra').value,
+          torre: document.getElementById('torre').value,
+          dataConcreto: document.getElementById('dataConcreto').value,
+          pavimentoAtivo: document.getElementById('pavimentoAtivo').value,
+          pilar: document.getElementById('pilar').value,
+          pilarCor: document.getElementById('corPilar').value,
+          grade: document.getElementById('grade').value,
+          gradeCor: document.getElementById('corGrade').value,
+          viga: document.getElementById('viga').value,
+          vigaCor: document.getElementById('corViga').value,
+          garfo: document.getElementById('garfo').value,
+          garfoCor: document.getElementById('corGarfo').value,
+          laje: document.getElementById('laje').value,
+          lajeCor: document.getElementById('corLaje').value,
+          pavimentos: []
+      };
+      obras.push(obra);
+      localStorage.setItem('obras', JSON.stringify(obras));
+      this.reset();
+      toggleModal('modalObra');
+      displayObras();
+  });
 
-    function displayObras() {
-        tabelaObras.innerHTML = '';
-        obras.forEach((obra, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${obra.projetista}</td>
-                <td>${obra.nomeObra}</td>
-                <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${obra.endereco}</a></td>
-                <td>${obra.torre}</td>
-                <td>${obra.dataConcreto}</td>
-                <td>${obra.pavimentoAtivo}</td>              
-                <td style="background-color: ${obra.pilarCor};">${obra.pilar}</td>
-                <td style="background-color: ${obra.gradeCor};">${obra.grade}</td>
-                <td style="background-color: ${obra.vigaCor};">${obra.viga}</td>
-                <td style="background-color: ${obra.garfoCor};">${obra.garfo}</td>
-                <td style="background-color: ${obra.lajeCor};">${obra.laje}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
-                    <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
-                    <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">Ver Pavimentos</a>
-                </td>
-            `;
-            tabelaObras.appendChild(row);
-        });
-    }
+  function displayObras() {
+      tabelaObras.innerHTML = '';
+      obras.forEach((obra, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+              <td>${obra.projetista}</td>
+              <td>${obra.nomeObra}</td>
+              <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${obra.endereco}</a></td>
+              <td>${obra.torre}</td>
+              <td>${formatDateBR(new Date(obra.dataConcreto))}</td>
+              <td>${obra.pavimentoAtivo}</td>
+              <td style="background-color: ${obra.pilarCor};" onclick="editColor(${index}, 'pilarCor', this)">${obra.pilar}</td>
+              <td style="background-color: ${obra.gradeCor};" onclick="editColor(${index}, 'gradeCor', this)">${obra.grade}</td>
+              <td style="background-color: ${obra.vigaCor};" onclick="editColor(${index}, 'vigaCor', this)">${obra.viga}</td>
+              <td style="background-color: ${obra.garfoCor};" onclick="editColor(${index}, 'garfoCor', this)">${obra.garfo}</td>
+              <td style="background-color: ${obra.lajeCor};" onclick="editColor(${index}, 'lajeCor', this)">${obra.laje}</td>
+              <td>
+                  <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
+                  <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
+                  <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">Ver Pavimentos</a>
+              </td>
+          `;
+          tabelaObras.appendChild(row);
+      });
+  }
 
-    function toggleModal(modalId) {
-        const modal = document.getElementById(modalId);
-        modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-    }
+  function editColor(index, tipo, cell) {
+      const input = document.createElement('input');
+      input.type = 'color';
+      input.value = obras[index][tipo];
+      cell.innerHTML = '';
+      cell.appendChild(input);
 
-    function selectObra(index) {
-        const modalPavimento = document.getElementById('modalPavimento');
-        modalPavimento.setAttribute('data-obra-index', index);
-        toggleModal('modalPavimento');
-    }
+      input.addEventListener('change', function() {
+          const novaCor = input.value;
+          obras[index][tipo] = novaCor;
+          localStorage.setItem('obras', JSON.stringify(obras));
+          cell.style.backgroundColor = novaCor;
+          cell.textContent = obras[index][tipo.replace('Cor', '')]; // Exibe o nome do elemento
+      });
 
-    document.getElementById('pavimentoForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const index = document.getElementById('modalPavimento').getAttribute('data-obra-index');
-        const pavimento = {
-            nome: document.getElementById('nomePavimento').value,
-            data: document.getElementById('dataPavimento').value
-        };
-        obras[index].pavimentos.push(pavimento);
-        localStorage.setItem('obras', JSON.stringify(obras));
-        document.getElementById('pavimentoForm').reset();
-        toggleModal('modalPavimento');
-        displayObras();
-    });
+      input.addEventListener('blur', function() {
+          cell.style.backgroundColor = obras[index][tipo]; // Restaura a cor original
+          cell.textContent = obras[index][tipo.replace('Cor', '')]; // Exibe o nome do elemento
+      });
+  }
 
-    function loadEditObra(index) {
-        const obra = obras[index];
-        document.getElementById('editProjetista').value = obra.projetista;
-        document.getElementById('editNomeObra').value = obra.nomeObra;
-        document.getElementById('editEnderecoObra').value = obra.endereco;
-        document.getElementById('editTorre').value = obra.torre;
-        document.getElementById('editDataConcreto').value = obra.dataConcreto;
-        document.getElementById('editPavimentoAtivo').value = obra.pavimentoAtivo;
-        document.getElementById('editPilar').value = obra.pilar;
-        document.getElementById('editCorPilar').value = obra.pilarCor;
-        document.getElementById('editGrade').value = obra.grade;
-        document.getElementById('editCorGrade').value = obra.gradeCor;
-        document.getElementById('editViga').value = obra.viga;
-        document.getElementById('editCorViga').value = obra.vigaCor;        
-        document.getElementById('editGarfo').value = obra.garfo;
-        document.getElementById('editCorGarfo').value = obra.garfoCor;
-        document.getElementById('editLaje').value = obra.laje;
-        document.getElementById('editCorLaje').value = obra.lajeCor;
-        document.getElementById('modalEditObra').setAttribute('data-obra-index', index);
-        toggleModal('modalEditObra');
-    }
+  function toggleModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+  }
 
-    document.getElementById('editObraForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const index = document.getElementById('modalEditObra').getAttribute('data-obra-index');
-        const obra = obras[index];
-        obra.projetista = document.getElementById('editProjetista').value;
-        obra.nomeObra = document.getElementById('editNomeObra').value;
-        obra.endereco = document.getElementById('editEnderecoObra').value;
-        obra.torre = document.getElementById('editTorre').value;
-        obra.dataConcreto = document.getElementById('editDataConcreto').value;
-        obra.pavimentoAtivo = document.getElementById('editPavimentoAtivo').value;
-        obra.pilar = document.getElementById('editPilar').value;
-        obra.pilarCor = document.getElementById('editCorPilar').value;
-        obra.grade = document.getElementById('editGrade').value;
-        obra.gradeCor = document.getElementById('editCorGrade').value;
-        obra.viga = document.getElementById('editViga').value;
-        obra.vigaCor = document.getElementById('editCorViga').value;
-        obra.garfo = document.getElementById('editGarfo').value;
-        obra.garfoCor = document.getElementById('editCorGarfo').value;
-        obra.laje = document.getElementById('editLaje').value;
-        obra.lajeCor = document.getElementById('editCorLaje').value;
-        localStorage.setItem('obras', JSON.stringify(obras));
-        toggleModal('modalEditObra');
-        displayObras();
-    });
+  function selectObra(index) {
+      const modalPavimento = document.getElementById('modalPavimento');
+      modalPavimento.setAttribute('data-obra-index', index);
+      toggleModal('modalPavimento');
+  }
 
-    function editPavimento(obraIndex, pavimentoIndex) {
-        const pavimento = obras[obraIndex].pavimentos[pavimentoIndex];
-        document.getElementById('editNomePavimento').value = pavimento.nome;
-        document.getElementById('editDataPavimento').value = pavimento.data;
-        document.getElementById('modalEditPavimento').setAttribute('data-obra-index', obraIndex);
-        document.getElementById('modalEditPavimento').setAttribute('data-pavimento-index', pavimentoIndex);
-        toggleModal('modalEditPavimento');
-    }
+  document.getElementById('pavimentoForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const index = document.getElementById('modalPavimento').getAttribute('data-obra-index');
+      const pavimento = {
+          nome: document.getElementById('nomePavimento').value,
+          data: document.getElementById('dataPavimento').value
+      };
+      obras[index].pavimentos.push(pavimento);
+      localStorage.setItem('obras', JSON.stringify(obras));
+      document.getElementById('pavimentoForm').reset();
+      toggleModal('modalPavimento');
+      displayObras();
+  });
 
-    document.getElementById('editPavimentoForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const obraIndex = document.getElementById('modalEditPavimento').getAttribute('data-obra-index');
-        const pavimentoIndex = document.getElementById('modalEditPavimento').getAttribute('data-pavimento-index');
-        obras[obraIndex].pavimentos[pavimentoIndex].nome = document.getElementById('editNomePavimento').value;
-        obras[obraIndex].pavimentos[pavimentoIndex].data = document.getElementById('editDataPavimento').value;
-        localStorage.setItem('obras', JSON.stringify(obras));
-        toggleModal('modalEditPavimento');
-        displayObras();
-    });
+  function loadEditObra(index) {
+      const obra = obras[index];
+      document.getElementById('editProjetista').value = obra.projetista;
+      document.getElementById('editNomeObra').value = obra.nomeObra;
+      document.getElementById('editEnderecoObra').value = obra.endereco;
+      document.getElementById('editTorre').value = obra.torre;
+      document.getElementById('editDataConcreto').value = obra.dataConcreto;
+      document.getElementById('editPavimentoAtivo').value = obra.pavimentoAtivo;
+      document.getElementById('editPilar').value = obra.pilar;
+      document.getElementById('editCorPilar').value = obra.pilarCor;
+      document.getElementById('editGrade').value = obra.grade;
+      document.getElementById('editCorGrade').value = obra.gradeCor;
+      document.getElementById('editViga').value = obra.viga;
+      document.getElementById('editCorViga').value = obra.vigaCor;        
+      document.getElementById('editGarfo').value = obra.garfo;
+      document.getElementById('editCorGarfo').value = obra.garfoCor;
+      document.getElementById('editLaje').value = obra.laje;
+      document.getElementById('editCorLaje').value = obra.lajeCor;
+      document.getElementById('modalEditObra').setAttribute('data-obra-index', index);
+      toggleModal('modalEditObra');
+  }
 
-    document.getElementById('filterInput').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const rows = tabelaObras.getElementsByTagName('tr');
-        for (let i = 0; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName('td');
-            let found = false;
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
-                    found = true;
-                    break;
-                }
-            }
-            rows[i].style.display = found ? '' : 'none';
-        }
-    });
+  document.getElementById('editObraForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const index = document.getElementById('modalEditObra').getAttribute('data-obra-index');
+      const obra = obras[index];
+      obra.projetista = document.getElementById('editProjetista').value;
+      obra.nomeObra = document.getElementById('editNomeObra').value;
+      obra.endereco = document.getElementById('editEnderecoObra').value;
+      obra.torre = document.getElementById('editTorre').value;
+      obra.dataConcreto = document.getElementById('editDataConcreto').value;
+      obra.pavimentoAtivo = document.getElementById('editPavimentoAtivo').value;
+      obra.pilar = document.getElementById('editPilar').value;
+      obra.pilarCor = document.getElementById('editCorPilar').value;
+      obra.grade = document.getElementById('editGrade').value;
+      obra.gradeCor = document.getElementById('editCorGrade').value;
+      obra.viga = document.getElementById('editViga').value;
+      obra.vigaCor = document.getElementById('editCorViga').value;
+      obra.garfo = document.getElementById('editGarfo').value;
+      obra.garfoCor = document.getElementById('editCorGarfo').value;
+      obra.laje = document.getElementById('editLaje').value;
+      obra.lajeCor = document.getElementById('editCorLaje').value;
+      localStorage.setItem('obras', JSON.stringify(obras));
+      toggleModal('modalEditObra');
+      displayObras();
+  });
 
-    let sortDirection = {}; // Armazena a direção de classificação para cada coluna
+  function editPavimento(obraIndex, pavimentoIndex) {
+      const pavimento = obras[obraIndex].pavimentos[pavimentoIndex];
+      document.getElementById('editNomePavimento').value = pavimento.nome;
+      document.getElementById('editDataPavimento').value = pavimento.data;
+      document.getElementById('modalEditPavimento').setAttribute('data-obra-index', obraIndex);
+      document.getElementById('modalEditPavimento').setAttribute('data-pavimento-index', pavimentoIndex);
+      toggleModal('modalEditPavimento');
+  }
 
-    function sortTable(colIndex) {
-        const tabelaObras = document.getElementById('tabelaObras');
-        const rows = Array.from(tabelaObras.rows);
-        const isAscending = sortDirection[colIndex] === 'asc'; // Verifica a direção de classificação atual
+  document.getElementById('editPavimentoForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const obraIndex = document.getElementById('modalEditPavimento').getAttribute('data-obra-index');
+      const pavimentoIndex = document.getElementById('modalEditPavimento').getAttribute('data-pavimento-index');
+      obras[obraIndex].pavimentos[pavimentoIndex].nome = document.getElementById('editNomePavimento').value;
+      obras[obraIndex].pavimentos[pavimentoIndex].data = document.getElementById('editDataPavimento').value;
+      localStorage.setItem('obras', JSON.stringify(obras));
+      toggleModal('modalEditPavimento');
+      displayObras();
+  });
 
-        // Verifica se a coluna é uma coluna de datas (ajuste o índice da coluna para corresponder à coluna de data)
-        const isDateColumn = (colIndex === 4); // Ajuste conforme necessário
+  document.getElementById('filterInput').addEventListener('input', function() {
+      const filter = this.value.toLowerCase();
+      const rows = tabelaObras.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName('td');
+          let found = false;
+          for (let j = 0; j < cells.length; j++) {
+              if (cells[j] && cells[j].innerText.toLowerCase().includes(filter)) {
+                  found = true;
+                  break;
+              }
+          }
+          rows[i].style.display = found ? '' : 'none';
+      }
+  });
 
-        rows.sort((a, b) => {
-            let aText = a.cells[colIndex].innerText.trim();
-            let bText = b.cells[colIndex].innerText.trim();
+  let sortDirection = {}; // Armazena a direção de classificação para cada coluna
 
-            // Se for uma coluna de datas, converta para o formato Date antes de comparar
-            if (isDateColumn) {
-                aText = parseDateBR(aText);
-                bText = parseDateBR(bText);
-                return isAscending ? aText - bText : bText - aText;
-            } else {
-                // Comparação de texto normal para todas as outras colunas
-                return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
-            }
-        });
+  function sortTable(colIndex) {
+      const tabelaObras = document.getElementById('tabelaObras');
+      const rows = Array.from(tabelaObras.rows);
+      const isAscending = sortDirection[colIndex] === 'asc'; // Verifica a direção de classificação atual
 
-        // Altera a direção de classificação
-        sortDirection[colIndex] = isAscending ? 'desc' : 'asc';
+      // Verifica se a coluna é uma coluna de datas (ajuste o índice da coluna para corresponder à coluna de data)
+      const isDateColumn = (colIndex === 4); // Ajuste conforme necessário
 
-        // Reordena as linhas na tabela
-        rows.forEach(row => tabelaObras.appendChild(row));
-    }
+      rows.sort((a, b) => {
+          let aText = a.cells[colIndex].innerText.trim();
+          let bText = b.cells[colIndex].innerText.trim();
 
-    // Função para converter datas do formato BR (dd/mm/yyyy) para um objeto Date
-    function parseDateBR(dateString) {
-        const parts = dateString.split('/');
-        return new Date(parts[2], parts[1] - 1, parts[0]); // Ano, Mês (0-11), Dia
-    }
+          // Se for uma coluna de datas, converta para o formato Date antes de comparar
+          if (isDateColumn) {
+              aText = parseDateBR(aText);
+              bText = parseDateBR(bText);
+              return isAscending ? aText - bText : bText - aText;
+          } else {
+              // Comparação de texto normal para todas as outras colunas
+              return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+          }
+      });
 
-    // Função para exibir a data no formato BR
-    function formatDateBR(date) {
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
+      // Altera a direção de classificação
+      sortDirection[colIndex] = isAscending ? 'desc' : 'asc';
 
-    // Função para exibir as obras e garantir que a data esteja no formato BR
-    function displayObras() {
-        const tabelaObras = document.getElementById('tabelaObras');
-        tabelaObras.innerHTML = '';
+      // Reordena as linhas na tabela
+      rows.forEach(row => tabelaObras.appendChild(row));
+  }
 
-        obras.forEach((obra, index) => {
-            const row = document.createElement('tr');
-            
-            // Converte a data de concreto para o formato BR ao exibir
-            const dataConcretoFormatted = formatDateBR(new Date(obra.dataConcreto));
+  // Função para converter datas do formato BR (dd/mm/yyyy) para um objeto Date
+  function parseDateBR(dateString) {
+      const parts = dateString.split('/');
+      return new Date(parts[2], parts[1] - 1, parts[0]); // Ano, Mês (0-11), Dia
+  }
 
-            row.innerHTML = `
-                <td>${obra.projetista}</td>
-                <td>${obra.nomeObra}</td>
-                <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${obra.endereco}</a></td>
-                <td>${obra.torre}</td>
-                <td>${dataConcretoFormatted}</td>
-                <td>${obra.pavimentoAtivo}</td>
-                <td style="background-color: ${obra.pilarCor};">${obra.pilar}</td>
-                <td style="background-color: ${obra.gradeCor};">${obra.grade}</td>
-                <td style="background-color: ${obra.vigaCor};">${obra.viga}</td>
-                <td style="background-color: ${obra.garfoCor};">${obra.garfo}</td>
-                <td style="background-color: ${obra.lajeCor};">${obra.laje}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
-                    <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
-                    <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">Ver Pavimentos</a>
-                </td>
-            `;
-            tabelaObras.appendChild(row);
-        });
-    }
+  // Função para exibir a data no formato BR
+  function formatDateBR(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+  }
 
-
-    displayObras();
+  displayObras();
 </script>
-
 </body>
 </html>

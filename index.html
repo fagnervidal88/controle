@@ -306,7 +306,7 @@
       </div>
   </div>
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <script>
   let obras = JSON.parse(localStorage.getItem('obras')) || [];
   const tabelaObras = document.getElementById('tabelaObras');
@@ -321,15 +321,15 @@
           dataConcreto: document.getElementById('dataConcreto').value,
           pavimentoAtivo: document.getElementById('pavimentoAtivo').value,
           pilar: document.getElementById('pilar').value,
-          pilarCor: document.getElementById('corPilar').value,
+          corPilar: document.getElementById('corPilar').value,
           grade: document.getElementById('grade').value,
-          gradeCor: document.getElementById('corGrade').value,
+          corGrade: document.getElementById('corGrade').value,
           viga: document.getElementById('viga').value,
-          vigaCor: document.getElementById('corViga').value,
+          corViga: document.getElementById('corViga').value,
           garfo: document.getElementById('garfo').value,
-          garfoCor: document.getElementById('corGarfo').value,
+          corGarfo: document.getElementById('corGarfo').value,
           laje: document.getElementById('laje').value,
-          lajeCor: document.getElementById('corLaje').value,
+          corLaje: document.getElementById('corLaje').value,
           pavimentos: []
       };
       obras.push(obra);
@@ -350,11 +350,11 @@
               <td>${obra.torre}</td>
               <td>${formatDateBR(new Date(obra.dataConcreto))}</td>
               <td>${obra.pavimentoAtivo}</td>
-              <td style="background-color: ${obra.pilarCor};" onclick="editColor(${index}, 'pilarCor', this)">${obra.pilar}</td>
-              <td style="background-color: ${obra.gradeCor};" onclick="editColor(${index}, 'gradeCor', this)">${obra.grade}</td>
-              <td style="background-color: ${obra.vigaCor};" onclick="editColor(${index}, 'vigaCor', this)">${obra.viga}</td>
-              <td style="background-color: ${obra.garfoCor};" onclick="editColor(${index}, 'garfoCor', this)">${obra.garfo}</td>
-              <td style="background-color: ${obra.lajeCor};" onclick="editColor(${index}, 'lajeCor', this)">${obra.laje}</td>
+              <td>${obra.pilar} <input type="color" value="${obra.corPilar}" onchange="atualizarCor(${index}, 'corPilar', this.value)"></td>
+              <td>${obra.grade} <input type="color" value="${obra.corGrade}" onchange="atualizarCor(${index}, 'corGrade', this.value)"></td>
+              <td>${obra.viga} <input type="color" value="${obra.corViga}" onchange="atualizarCor(${index}, 'corViga', this.value)"></td>
+              <td>${obra.garfo} <input type="color" value="${obra.corGarfo}" onchange="atualizarCor(${index}, 'corGarfo', this.value)"></td>
+              <td>${obra.laje} <input type="color" value="${obra.corLaje}" onchange="atualizarCor(${index}, 'corLaje', this.value)"></td>
               <td>
                   <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
                   <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
@@ -365,25 +365,11 @@
       });
   }
 
-  function editColor(index, tipo, cell) {
-      const input = document.createElement('input');
-      input.type = 'color';
-      input.value = obras[index][tipo];
-      cell.innerHTML = '';
-      cell.appendChild(input);
-
-      input.addEventListener('change', function() {
-          const novaCor = input.value;
-          obras[index][tipo] = novaCor;
-          localStorage.setItem('obras', JSON.stringify(obras));
-          cell.style.backgroundColor = novaCor;
-          cell.textContent = obras[index][tipo.replace('Cor', '')]; // Exibe o nome do elemento
-      });
-
-      input.addEventListener('blur', function() {
-          cell.style.backgroundColor = obras[index][tipo]; // Restaura a cor original
-          cell.textContent = obras[index][tipo.replace('Cor', '')]; // Exibe o nome do elemento
-      });
+  function atualizarCor(index, campo, cor) {
+      obras[index][campo] = cor;
+      localStorage.setItem('obras', JSON.stringify(obras));
+      console.log(`Cor ${campo} da obra ${index} atualizada para ${cor}`);
+      displayObras(); // Atualiza a tabela para refletir as mudanças
   }
 
   function toggleModal(modalId) {
@@ -420,15 +406,15 @@
       document.getElementById('editDataConcreto').value = obra.dataConcreto;
       document.getElementById('editPavimentoAtivo').value = obra.pavimentoAtivo;
       document.getElementById('editPilar').value = obra.pilar;
-      document.getElementById('editCorPilar').value = obra.pilarCor;
+      document.getElementById('editCorPilar').value = obra.corPilar;
       document.getElementById('editGrade').value = obra.grade;
-      document.getElementById('editCorGrade').value = obra.gradeCor;
+      document.getElementById('editCorGrade').value = obra.corGrade;
       document.getElementById('editViga').value = obra.viga;
-      document.getElementById('editCorViga').value = obra.vigaCor;        
+      document.getElementById('editCorViga').value = obra.corViga;        
       document.getElementById('editGarfo').value = obra.garfo;
-      document.getElementById('editCorGarfo').value = obra.garfoCor;
+      document.getElementById('editCorGarfo').value = obra.corGarfo;
       document.getElementById('editLaje').value = obra.laje;
-      document.getElementById('editCorLaje').value = obra.lajeCor;
+      document.getElementById('editCorLaje').value = obra.corLaje;
       document.getElementById('modalEditObra').setAttribute('data-obra-index', index);
       toggleModal('modalEditObra');
   }
@@ -444,37 +430,17 @@
       obra.dataConcreto = document.getElementById('editDataConcreto').value;
       obra.pavimentoAtivo = document.getElementById('editPavimentoAtivo').value;
       obra.pilar = document.getElementById('editPilar').value;
-      obra.pilarCor = document.getElementById('editCorPilar').value;
+      obra.corPilar = document.getElementById('editCorPilar').value;
       obra.grade = document.getElementById('editGrade').value;
-      obra.gradeCor = document.getElementById('editCorGrade').value;
+      obra.corGrade = document.getElementById('editCorGrade').value;
       obra.viga = document.getElementById('editViga').value;
-      obra.vigaCor = document.getElementById('editCorViga').value;
+      obra.corViga = document.getElementById('editCorViga').value;
       obra.garfo = document.getElementById('editGarfo').value;
-      obra.garfoCor = document.getElementById('editCorGarfo').value;
+      obra.corGarfo = document.getElementById('editCorGarfo').value;
       obra.laje = document.getElementById('editLaje').value;
-      obra.lajeCor = document.getElementById('editCorLaje').value;
+      obra.corLaje = document.getElementById('editCorLaje').value;
       localStorage.setItem('obras', JSON.stringify(obras));
       toggleModal('modalEditObra');
-      displayObras();
-  });
-
-  function editPavimento(obraIndex, pavimentoIndex) {
-      const pavimento = obras[obraIndex].pavimentos[pavimentoIndex];
-      document.getElementById('editNomePavimento').value = pavimento.nome;
-      document.getElementById('editDataPavimento').value = pavimento.data;
-      document.getElementById('modalEditPavimento').setAttribute('data-obra-index', obraIndex);
-      document.getElementById('modalEditPavimento').setAttribute('data-pavimento-index', pavimentoIndex);
-      toggleModal('modalEditPavimento');
-  }
-
-  document.getElementById('editPavimentoForm').addEventListener('submit', function(event) {
-      event.preventDefault();
-      const obraIndex = document.getElementById('modalEditPavimento').getAttribute('data-obra-index');
-      const pavimentoIndex = document.getElementById('modalEditPavimento').getAttribute('data-pavimento-index');
-      obras[obraIndex].pavimentos[pavimentoIndex].nome = document.getElementById('editNomePavimento').value;
-      obras[obraIndex].pavimentos[pavimentoIndex].data = document.getElementById('editDataPavimento').value;
-      localStorage.setItem('obras', JSON.stringify(obras));
-      toggleModal('modalEditPavimento');
       displayObras();
   });
 
@@ -497,50 +463,23 @@
   let sortDirection = {}; // Armazena a direção de classificação para cada coluna
 
   function sortTable(colIndex) {
-      const tabelaObras = document.getElementById('tabelaObras');
-      const rows = Array.from(tabelaObras.rows);
-      const isAscending = sortDirection[colIndex] === 'asc'; // Verifica a direção de classificação atual
-
-      // Verifica se a coluna é uma coluna de datas (ajuste o índice da coluna para corresponder à coluna de data)
-      const isDateColumn = (colIndex === 4); // Ajuste conforme necessário
-
-      rows.sort((a, b) => {
-          let aText = a.cells[colIndex].innerText.trim();
-          let bText = b.cells[colIndex].innerText.trim();
-
-          // Se for uma coluna de datas, converta para o formato Date antes de comparar
-          if (isDateColumn) {
-              aText = parseDateBR(aText);
-              bText = parseDateBR(bText);
-              return isAscending ? aText - bText : bText - aText;
-          } else {
-              // Comparação de texto normal para todas as outras colunas
-              return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
-          }
+      sortDirection[colIndex] = !sortDirection[colIndex]; // Alterna a direção
+      obras.sort((a, b) => {
+          const aValue = Object.values(a)[colIndex];
+          const bValue = Object.values(b)[colIndex];
+          return (aValue < bValue ? -1 : 1) * (sortDirection[colIndex] ? 1 : -1);
       });
-
-      // Altera a direção de classificação
-      sortDirection[colIndex] = isAscending ? 'desc' : 'asc';
-
-      // Reordena as linhas na tabela
-      rows.forEach(row => tabelaObras.appendChild(row));
+      localStorage.setItem('obras', JSON.stringify(obras));
+      displayObras();
   }
 
-  // Função para converter datas do formato BR (dd/mm/yyyy) para um objeto Date
-  function parseDateBR(dateString) {
-      const parts = dateString.split('/');
-      return new Date(parts[2], parts[1] - 1, parts[0]); // Ano, Mês (0-11), Dia
-  }
-
-  // Função para exibir a data no formato BR
   function formatDateBR(date) {
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Mês começa de 0
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      return date.toLocaleDateString('pt-BR', options);
   }
 
   displayObras();
 </script>
+
 </body>
 </html>

@@ -303,34 +303,44 @@
   });
 
   function displayObras() {
-      tabelaObras.innerHTML = '';
-      obras.forEach((obra, index) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-              <td>${obra.projetista}</td>
-              <td>${obra.nomeObra}</td>
-              <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${obra.endereco}</a></td>
-              <td>${obra.torre}</td>
-              <td>${formatDateBR(new Date(obra.dataConcreto))}</td>
-              <td>${obra.pavimentoAtivo}</td>
-              <td>${obra.pilar} <input type="color" value="${obra.corPilar}" onchange="atualizarCor(${index}, 'corPilar', this.value)"></td>
-              <td>${obra.grade} <input type="color" value="${obra.corGrade}" onchange="atualizarCor(${index}, 'corGrade', this.value)"></td>
-              <td>${obra.viga} <input type="color" value="${obra.corViga}" onchange="atualizarCor(${index}, 'corViga', this.value)"></td>
-              <td>${obra.garfo} <input type="color" value="${obra.corGarfo}" onchange="atualizarCor(${index}, 'corGarfo', this.value)"></td>
-              <td>${obra.laje} <input type="color" value="${obra.corLaje}" onchange="atualizarCor(${index}, 'corLaje', this.value)"></td>
-              <td>
-                  <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
-                  <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
-                  <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">Ver Pavimentos</a>
-              </td>
-          `;
-          tabelaObras.appendChild(row);
-      });
-  }
+    const maxLength = 20; // Defina o número máximo de caracteres que deseja exibir
+
+    tabelaObras.innerHTML = ''; // Limpa a tabela antes de renderizar novamente
+    obras.forEach((obra, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${limitarTexto(obra.projetista, maxLength)}</td>
+            <td>${limitarTexto(obra.nomeObra, maxLength)}</td>
+            <td><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(obra.endereco)}" target="_blank">${limitarTexto(obra.endereco, maxLength)}</a></td>
+            <td>${limitarTexto(obra.torre, maxLength)}</td>
+            <td>${formatDateBR(new Date(obra.dataConcreto))}</td>
+            <td>${limitarTexto(obra.pavimentoAtivo, maxLength)}</td>
+            <td><input type="color" value="${obra.corPilar}" onchange="atualizarCor(${index}, 'corPilar', this.value)"> ${limitarTexto(obra.pilar, maxLength)}</td>
+            <td><input type="color" value="${obra.corGrade}" onchange="atualizarCor(${index}, 'corGrade', this.value)"> ${limitarTexto(obra.grade, maxLength)}</td>
+            <td><input type="color" value="${obra.corViga}" onchange="atualizarCor(${index}, 'corViga', this.value)"> ${limitarTexto(obra.viga, maxLength)}</td>
+            <td><input type="color" value="${obra.corGarfo}" onchange="atualizarCor(${index}, 'corGarfo', this.value)"> ${limitarTexto(obra.garfo, maxLength)}</td>
+            <td><input type="color" value="${obra.corLaje}" onchange="atualizarCor(${index}, 'corLaje', this.value)"> ${limitarTexto(obra.laje, maxLength)}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">Adicionar Pavimento</button>
+                <button class="btn btn-info btn-sm" onclick="loadEditObra(${index})">Editar</button>
+                <a href="pavimentos.html?index=${index}" class="btn btn-secondary btn-sm">Ver Pavimentos</a>
+            </td>
+        `;
+        tabelaObras.appendChild(row); // Adiciona a linha à tabela
+    });
+}
+
+// Função para limitar o número de caracteres e adicionar reticências, se necessário
+function limitarTexto(texto, limite) {
+    if (texto.length > limite) {
+        return texto.substring(0, limite) + '...'; // Limita e adiciona reticências
+    }
+    return texto; // Retorna o texto original se estiver dentro do limite
+}
 
   function atualizarCor(index, campo, cor) {
-      obras[index][campo] = cor;
-      localStorage.setItem('obras', JSON.stringify(obras));
+      obras[index][campo] = cor; // Atualiza a cor da obra no índice especificado
+      localStorage.setItem('obras', JSON.stringify(obras)); // Salva no localStorage
       console.log(`Cor ${campo} da obra ${index} atualizada para ${cor}`);
       displayObras(); // Atualiza a tabela para refletir as mudanças
   }

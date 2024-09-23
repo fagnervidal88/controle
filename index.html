@@ -130,41 +130,21 @@
                             <input type="text" id="pilar" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="corPilar">Cor Pilar</label>
-                            <input type="color" id="corPilar" class="form-control" value="#ffffff" required>
-                        </div>
-                        <div class="form-group">
                             <label for="grade">Grade</label>
                             <input type="text" id="grade" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label for="corGrade">Cor Grade</label>
-                            <input type="color" id="corGrade" class="form-control" value="#ffffff" required>
-                        </div>
-                        <div class="form-group">
                             <label for="viga">Viga</label>
                             <input type="text" id="viga" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="corViga">Cor Viga</label>
-                            <input type="color" id="corViga" class="form-control" value="#ffffff" required>
-                        </div>                     
+                        </div>                 
                         <div class="form-group">
                             <label for="garfo">Garfo</label>
                             <input type="text" id="garfo" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="corGarfo">Cor Garfo</label>
-                            <input type="color" id="corGarfo" class="form-control" value="#ffffff" required>
-                        </div>                                            
+                        </div>                                         
                         <div class="form-group">
                             <label for="laje">Laje</label>
                             <input type="text" id="laje" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="corLaje">Cor Laje</label>
-                            <input type="color" id="corLaje" class="form-control" value="#ffffff" required>
-                        </div>                                            
+                        </div>                                         
                         <button type="submit" class="btn btn-primary">Cadastrar Obra</button>
                     </form>
                 </div>
@@ -265,40 +245,20 @@
                       <input type="text" id="editPilar" class="form-control" required>
                   </div>
                   <div class="form-group">
-                      <label for="editCorPilar">Cor Pilar</label>
-                      <input type="color" id="editCorPilar" class="form-control" required>
-                  </div>                        
-                  <div class="form-group">
                       <label for="editGrade">Grade</label>
                       <input type="text" id="editGrade" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                      <label for="editCorGrade">Cor Grade</label>
-                      <input type="color" id="editCorGrade" class="form-control" required>
                   </div>
                   <div class="form-group">
                       <label for="editViga">Viga</label>
                       <input type="text" id="editViga" class="form-control" required>
                   </div>
                   <div class="form-group">
-                      <label for="editCorViga">Cor Viga</label>
-                      <input type="color" id="editCorViga" class="form-control" required>
-                  </div>
-                  <div class="form-group">
                       <label for="editGarfo">Garfo</label>
                       <input type="text" id="editGarfo" class="form-control" required>
                   </div>
                   <div class="form-group">
-                      <label for="editCorGarfo">Cor Garfo</label>
-                      <input type="color" id="editCorGarfo" class="form-control" required>
-                  </div>
-                  <div class="form-group">
                       <label for="editLaje">Laje</label>
                       <input type="text" id="editLaje" class="form-control" required>
-                  </div>
-                  <div class="form-group">
-                      <label for="editCorLaje">Cor Laje</label>
-                      <input type="color" id="editCorLaje" class="form-control" required>
                   </div>
                   <button type="submit" class="btn btn-primary">Salvar Alterações</button>
               </form>
@@ -321,15 +281,10 @@
           dataConcreto: document.getElementById('dataConcreto').value,
           pavimentoAtivo: document.getElementById('pavimentoAtivo').value,
           pilar: document.getElementById('pilar').value,
-          corPilar: document.getElementById('corPilar').value,
           grade: document.getElementById('grade').value,
-          corGrade: document.getElementById('corGrade').value,
           viga: document.getElementById('viga').value,
-          corViga: document.getElementById('corViga').value,
           garfo: document.getElementById('garfo').value,
-          corGarfo: document.getElementById('corGarfo').value,
           laje: document.getElementById('laje').value,
-          corLaje: document.getElementById('corLaje').value,
           pavimentos: []
       };
       obras.push(obra);
@@ -406,15 +361,10 @@
       document.getElementById('editDataConcreto').value = obra.dataConcreto;
       document.getElementById('editPavimentoAtivo').value = obra.pavimentoAtivo;
       document.getElementById('editPilar').value = obra.pilar;
-      document.getElementById('editCorPilar').value = obra.corPilar;
       document.getElementById('editGrade').value = obra.grade;
-      document.getElementById('editCorGrade').value = obra.corGrade;
-      document.getElementById('editViga').value = obra.viga;
-      document.getElementById('editCorViga').value = obra.corViga;        
+      document.getElementById('editViga').value = obra.viga;    
       document.getElementById('editGarfo').value = obra.garfo;
-      document.getElementById('editCorGarfo').value = obra.corGarfo;
       document.getElementById('editLaje').value = obra.laje;
-      document.getElementById('editCorLaje').value = obra.corLaje;
       document.getElementById('modalEditObra').setAttribute('data-obra-index', index);
       toggleModal('modalEditObra');
   }
@@ -430,15 +380,10 @@
       obra.dataConcreto = document.getElementById('editDataConcreto').value;
       obra.pavimentoAtivo = document.getElementById('editPavimentoAtivo').value;
       obra.pilar = document.getElementById('editPilar').value;
-      obra.corPilar = document.getElementById('editCorPilar').value;
       obra.grade = document.getElementById('editGrade').value;
-      obra.corGrade = document.getElementById('editCorGrade').value;
       obra.viga = document.getElementById('editViga').value;
-      obra.corViga = document.getElementById('editCorViga').value;
       obra.garfo = document.getElementById('editGarfo').value;
-      obra.corGarfo = document.getElementById('editCorGarfo').value;
       obra.laje = document.getElementById('editLaje').value;
-      obra.corLaje = document.getElementById('editCorLaje').value;
       localStorage.setItem('obras', JSON.stringify(obras));
       toggleModal('modalEditObra');
       displayObras();

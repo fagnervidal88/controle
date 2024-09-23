@@ -53,8 +53,8 @@
             color: #555;
         }
         input[type="color"] {
-            width: 30px;
-            height: 30px;
+            width: none;
+            height: none;
             padding: 0;
             border: none;
             background: none;
@@ -247,9 +247,14 @@
                   <div class="form-group">
                       <label for="editProjetista">Projetista</label>
                       <select id="editProjetista" class="form-control" required>
-                          <option value="João Silva">João Silva</option>
-                          <option value="Maria Souza">Maria Souza</option>
-                          <option value="Carlos Oliveira">Carlos Oliveira</option>
+                          <option value="Alan">Alan</option>
+                          <option value="Anderson">Anderson</option>
+                          <option value="Edno">Edno</option>
+                          <option value="Emilio">Emilio</option>
+                          <option value="Fabio">Fabio</option>
+                          <option value="Tamara">Tamara</option>
+                          <option value="Vitor">Vitor</option>
+                          <option value="Yolanda">Yolanda</option>
                       </select>
                   </div>
                   <div class="form-group">
@@ -341,11 +346,66 @@
             <td>${limitarTexto(obra.torre, maxLength)}</td>
             <td>${formatDateBR(new Date(obra.dataConcreto))}</td>
             <td>${limitarTexto(obra.pavimentoAtivo, maxLength)}</td>
-            <td><input type="color" value="${obra.corPilar}" onchange="atualizarCor(${index}, 'corPilar', this.value)"> ${limitarTexto(obra.pilar, maxLength)}</td>
-            <td><input type="color" value="${obra.corGrade}" onchange="atualizarCor(${index}, 'corGrade', this.value)"> ${limitarTexto(obra.grade, maxLength)}</td>
-            <td><input type="color" value="${obra.corViga}" onchange="atualizarCor(${index}, 'corViga', this.value)"> ${limitarTexto(obra.viga, maxLength)}</td>
-            <td><input type="color" value="${obra.corGarfo}" onchange="atualizarCor(${index}, 'corGarfo', this.value)"> ${limitarTexto(obra.garfo, maxLength)}</td>
-            <td><input type="color" value="${obra.corLaje}" onchange="atualizarCor(${index}, 'corLaje', this.value)"> ${limitarTexto(obra.laje, maxLength)}</td>
+
+            <!-- Coluna Pilar -->
+            <td style="background-color: ${obra.corPilar}; cursor: pointer;" onclick="mostrarCores(${index}, 'Pilar')">
+                <span id="corTextoPilar${index}" style="color: #000;">${limitarTexto(obra.pilar, maxLength)}</span>
+                <select id="selectCorPilar${index}" style="display: none;" onchange="atualizarCor(${index}, 'corPilar', this.value); mostrarTexto(${index}, 'Pilar', this.value);" onblur="this.style.display='none';">
+                    <option value="#ffffff" ${obra.corPilar === '#ffffff' ? 'selected' : ''}>Branco</option>
+                    <option value="#ffff00" ${obra.corPilar === '#ffff00' ? 'selected' : ''}>Amarelo</option>
+                    <option value="#ff0000" ${obra.corPilar === '#ff0000' ? 'selected' : ''}>Vermelho</option>
+                    <option value="#00ff00" ${obra.corPilar === '#00ff00' ? 'selected' : ''}>Verde</option>
+                    <option value="#0000ff" ${obra.corPilar === '#0000ff' ? 'selected' : ''}>Azul</option>
+                </select>
+            </td>
+
+            <!-- Coluna Grade -->
+            <td style="background-color: ${obra.corGrade}; cursor: pointer;" onclick="mostrarCores(${index}, 'Grade')">
+                <span id="corTextoGrade${index}" style="color: #000;">${limitarTexto(obra.grade, maxLength)}</span>
+                <select id="selectCorGrade${index}" style="display: none;" onchange="atualizarCor(${index}, 'corGrade', this.value); mostrarTexto(${index}, 'Grade', this.value);" onblur="this.style.display='none';">
+                    <option value="#ffffff" ${obra.corGrade === '#ffffff' ? 'selected' : ''}>Branco</option>
+                    <option value="#ffff00" ${obra.corGrade === '#ffff00' ? 'selected' : ''}>Amarelo</option>
+                    <option value="#ff0000" ${obra.corGrade === '#ff0000' ? 'selected' : ''}>Vermelho</option>
+                    <option value="#00ff00" ${obra.corGrade === '#00ff00' ? 'selected' : ''}>Verde</option>
+                    <option value="#0000ff" ${obra.corGrade === '#0000ff' ? 'selected' : ''}>Azul</option>
+                </select>
+            </td>
+
+            <!-- Coluna Viga -->
+            <td style="background-color: ${obra.corViga}; cursor: pointer;" onclick="mostrarCores(${index}, 'Viga')">
+                <span id="corTextoViga${index}" style="color: #000;">${limitarTexto(obra.viga, maxLength)}</span>
+                <select id="selectCorViga${index}" style="display: none;" onchange="atualizarCor(${index}, 'corViga', this.value); mostrarTexto(${index}, 'Viga', this.value);" onblur="this.style.display='none';">
+                    <option value="#ffffff" ${obra.corViga === '#ffffff' ? 'selected' : ''}>Branco</option>
+                    <option value="#ffff00" ${obra.corViga === '#ffff00' ? 'selected' : ''}>Amarelo</option>
+                    <option value="#ff0000" ${obra.corViga === '#ff0000' ? 'selected' : ''}>Vermelho</option>
+                    <option value="#00ff00" ${obra.corViga === '#00ff00' ? 'selected' : ''}>Verde</option>
+                    <option value="#0000ff" ${obra.corViga === '#0000ff' ? 'selected' : ''}>Azul</option>
+                </select>
+            </td>
+
+            <!-- Coluna Garfo -->
+            <td style="background-color: ${obra.corGarfo}; cursor: pointer;" onclick="mostrarCores(${index}, 'Garfo')">
+                <span id="corTextoGarfo${index}" style="color: #000;">${limitarTexto(obra.garfo, maxLength)}</span>
+                <select id="selectCorGarfo${index}" style="display: none;" onchange="atualizarCor(${index}, 'corGarfo', this.value); mostrarTexto(${index}, 'Garfo', this.value);" onblur="this.style.display='none';">
+                    <option value="#ffffff" ${obra.corGarfo === '#ffffff' ? 'selected' : ''}>Branco</option>
+                    <option value="#ffff00" ${obra.corGarfo === '#ffff00' ? 'selected' : ''}>Amarelo</option>
+                    <option value="#ff0000" ${obra.corGarfo === '#ff0000' ? 'selected' : ''}>Vermelho</option>
+                    <option value="#00ff00" ${obra.corGarfo === '#00ff00' ? 'selected' : ''}>Verde</option>
+                    <option value="#0000ff" ${obra.corGarfo === '#0000ff' ? 'selected' : ''}>Azul</option>
+                </select>
+            </td>
+
+            <!-- Coluna Laje -->
+            <td style="background-color: ${obra.corLaje}; cursor: pointer;" onclick="mostrarCores(${index}, 'Laje')">
+                <span id="corTextoLaje${index}" style="color: #000;">${limitarTexto(obra.laje, maxLength)}</span>
+                <select id="selectCorLaje${index}" style="display: none;" onchange="atualizarCor(${index}, 'corLaje', this.value); mostrarTexto(${index}, 'Laje', this.value);" onblur="this.style.display='none';">
+                    <option value="#ffffff" ${obra.corLaje === '#ffffff' ? 'selected' : ''}>Branco</option>
+                    <option value="#ffff00" ${obra.corLaje === '#ffff00' ? 'selected' : ''}>Amarelo</option>
+                    <option value="#ff0000" ${obra.corLaje === '#ff0000' ? 'selected' : ''}>Vermelho</option>
+                    <option value="#00ff00" ${obra.corLaje === '#00ff00' ? 'selected' : ''}>Verde</option>
+                    <option value="#0000ff" ${obra.corLaje === '#0000ff' ? 'selected' : ''}>Azul</option>
+                </select>
+            </td>
             <td>
                 <button class="btn btn-warning btn-sm" onclick="selectObra(${index})">
                     <i class="fas fa-plus"></i>
@@ -362,6 +422,27 @@
     });
 }
 
+function atualizarCor(index, campo, cor) {
+    obras[index][campo] = cor; // Atualiza a cor da obra no campo especificado
+    localStorage.setItem('obras', JSON.stringify(obras)); // Salva no localStorage
+    console.log(`Cor ${campo} da obra ${index} atualizada para ${cor}`);
+    displayObras(); // Atualiza a tabela
+}
+
+function mostrarCores(index, tipoCampo) {
+    const select = document.getElementById(`selectCor${tipoCampo}${index}`);
+    select.style.display = 'block';
+    select.focus(); // Foca no dropdown
+}
+
+function mostrarTexto(index, tipoCampo, cor) {
+    const texto = document.getElementById(`corTexto${tipoCampo}${index}`);
+    texto.innerText = cor; // Atualiza o texto com a cor selecionada
+}
+
+
+
+
 // Função para limitar o número de caracteres e adicionar reticências, se necessário
 function limitarTexto(texto, limite) {
     if (texto.length > limite) {
@@ -369,13 +450,6 @@ function limitarTexto(texto, limite) {
     }
     return texto; // Retorna o texto original se estiver dentro do limite
 }
-
-  function atualizarCor(index, campo, cor) {
-      obras[index][campo] = cor; // Atualiza a cor da obra no índice especificado
-      localStorage.setItem('obras', JSON.stringify(obras)); // Salva no localStorage
-      console.log(`Cor ${campo} da obra ${index} atualizada para ${cor}`);
-      displayObras(); // Atualiza a tabela para refletir as mudanças
-  }
 
   function toggleModal(modalId) {
       const modal = document.getElementById(modalId);

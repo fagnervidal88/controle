@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Controle de Obras</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         body {
             background-color: #f7f9fc;
@@ -21,6 +21,10 @@
         }
         th {
             cursor: pointer;
+            white-space: nowrap; /* Evita a quebra de linha nos títulos da tabela */
+        }
+        td {
+            white-space: nowrap; /* Evita a quebra de linha no conteúdo da tabela */
         }
         .modal {
             display: none;
@@ -56,7 +60,6 @@
     </style>
 </head>
 <body>
-
 <div class="container mt-5">
     <h2 class="text-center">Controle de Obras</h2>
     
@@ -64,7 +67,7 @@
 
     <input type="text" id="filterInput" class="form-control mb-3" placeholder="Filtrar por qualquer campo...">
 
-    <table class="table table-bordered">
+    <table class="table table-striped">
         <thead class="thead-light">
             <tr>
                 <th onclick="sortTable(0)">Projetista</th>
